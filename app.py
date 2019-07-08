@@ -24,10 +24,22 @@ class TwitterBot:
 
     def like_tweet(self, hashtag):
         bot = self.bot
-        bot.get('https://twitter.com/seatch?q='+hashtag+'&src=typd')
-        bot.sleep(3)
-
+        bot.get('https://twitter.com/search?q='+hashtag+'&src=typd')
+        time.sleep(3)
+        for i in range(1,3):
+            bot.execute_script('window.scrollTo(0,document.body.scrollHeight)')
+            time.sleep(2)
+            tweets = bot.find_elements_by_class_name('tweet')
+            links = [elem.get_attribute('data-permalink-path') 
+                    for elem in tweets]
+        for link in links:
+            bot.get('https://twitter.com' + link)
+            try:
+                bot.find_element_by_class_name('HeartAnimation').click()
+                time.sleep(20)
+            except Exception as ex:
+                time.sleep(60)
 
 ed = TwitterBot('@neniemmanuel', '14003417twitter')
 ed.login()
-ed.like_tweet('webdev')
+ed.like_tweet('bitcoin')
